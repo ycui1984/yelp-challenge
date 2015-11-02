@@ -46,6 +46,18 @@ def create_knows_relations(user, person):
     yelp_graph.cypher.execute("MATCH (u:Person),(p:Person) WHERE u.user_id = {user_id} AND p.user_id = {person_id} " +
                               "CREATE UNIQUE u-[:knows]->p", {"user_id" : user, "person_id" : person})
 
+def create_tip_relations(user, business):
+    yelp_graph.cypher.execute("MATCH (u:Person),(b:GhostB) WHERE u.user_id = {user_id} AND b.business_id = {business_id} " +
+                              "CREATE UNIQUE u-[:tips]->b", {"user_id" : user, "business_id" : business})
+
+def create_review_relations(json_object):
+    votes_list = dict_to_list(json_object["votes"])
+    yelp_graph.cypher.execute("MATCH (u:Person),(b:GhostB) WHERE u.user_id = {user_id} AND b.business_id = {business_id} " +
+                              "CREATE UNIQUE u-[:reviews {review_id:{review_id}, stars:{stars}, date:{date}, text:{text}, votes:{votes}}]->b",
+                               {"user_id":json_object["user_id"], "business_id":json_object["business_id"],
+                                "review_id": json_object["review_id"], "stars":json_object["stars"], "date":json_object["date"],
+                                "text":json_object["text"], "votes":votes_list})
+
 def handle_one_user(json_object):
     result_set = query_by_id(json_object["user_id"])
     votes_list, compliments_list = dict_to_list(json_object["votes"]), dict_to_list(json_object["compliments"])
@@ -81,11 +93,9 @@ def handle_one_user(json_object):
 def handle_one_bussiness(json_object):
     result_set = query_by_bussiness_id(json_object["business_id"])
     hours = dict_to_list(json_object["hours"])
-    print hours
     attributes = dict_to_list(json_object["attributes"])
-    print attributes
     assert len(result_set) == 0
-    yelp_graph.cypher.execute("CREATE (b :Business {business_id:{business_id}, full_address:{full_address}, " +
+    yelp_graph.cypher.execute("CREATE (b :Business :GhostB {business_id:{business_id}, full_address:{full_address}, " +
                               "open:{open}, categories:{categories}, city:{city}, review_count:{review_count}, " +
                               "name:{name}, neighborhoods:{neighborhoods}, longitude:{longitude}, state:{state}, " +
                               "stars:{stars}, latitude:{latitude}, type:{type}, attributes:{attributes}, hours:{hours}})",
@@ -97,26 +107,47 @@ def handle_one_bussiness(json_object):
                                "type":json_object["type"], "attributes":attributes, "hours":hours})
 
 def handle_one_checkin(json_object):
-    pass
-
-def handle_one_review(json_object):
-    pass
+    result_set = query_by_bussiness_id(json_object["business_id"])
+    checkin = dict_to_list(json_object["checkin_info"])
+    if len(result_set) == 1:
+        print "adding checkin info..."
+        yelp_graph.cypher.execute("MATCH (b:Business {business_id:{business_id}}) set p.checkin_info={checkin_info}",
+                                {"business_id":json_object["business_id"], "checkin_info":checkin})
+    else:
+        yelp_graph.cypher.execute("CREATE (b :Business {business_id:{business_id}, checkin_info:{checkin_info}})",
+                                {"business_id":json_object["business_id"], "checkin_info":checkin})
 
 def handle_one_tip(json_object):
-    pass
+    user, business = query_by_id(json_object["user_id"]), query_by_bussiness_id(json_object["business_id"])
+    if len(user) == 0:
+        yelp_graph.cypher.execute("CREATE (p:Person {user_id:{user_id}})", {"user_id":json_object["user_id"]})
+    if len(business) == 0:
+        yelp_graph.cypher.execute("CREATE (b:GhostB {business_id:{business_id}})", {"business_id":json_object["business_id"]})
+    create_tip_relations(json_object["user_id"], json_object["business_id"])
+
+def handle_one_review(json_object):
+    user, business = query_by_id(json_object["user_id"]), query_by_bussiness_id(json_object["business_id"])
+    if len(user) == 0:
+        yelp_graph.cypher.execute("CREATE (p:Person {user_id:{user_id}})", {"user_id":json_object["user_id"]})
+    if len(business) == 0:
+        yelp_graph.cypher.execute("CREATE (b:GhostB {business_id:{business_id}})", {"business_id":json_object["business_id"]})
+    create_review_relations(json_object)
 
 def prepare_database():
     yelp_graph.cypher.execute("MATCH (n)-[r]-() DELETE n,r")
     yelp_graph.cypher.execute("MATCH (n) DELETE n")
     try:
         yelp_graph.cypher.execute("DROP CONSTRAINT ON (p:Person) ASSERT p.user_id IS UNIQUE")
+        yelp_graph.cypher.execute("DROP CONSTRAINT ON (b:GhostB) ASSERT b.business_is IS UNIQUE")
     except:
         print "NO TARGET CONSTRAINT, IGNORE"
     yelp_graph.cypher.execute("CREATE CONSTRAINT ON (p:Person) ASSERT p.user_id IS UNIQUE")
+    yelp_graph.cypher.execute("CREATE CONSTRAINT ON (b:GhostB) ASSERT b.business_id IS UNIQUE")
 
 if __name__ == "__main__":
     # order here is important
     prepare_database()
-    file_list = ["yelp_academic_dataset_testbusiness.json"]
+    file_list = ["yelp_academic_dataset_user.json", "yelp_academic_dataset_business.json", "yelp_academic_dataset_checkin.json",
+                 "yelp_academic_dataset_tip.json", "yelp_academic_dataset_review.json"]
     for elem in file_list:
         parse_json_object_from_file("dataset/yelp/" + elem)
