@@ -24,14 +24,23 @@ def parse_json_object_from_file(file_name):
             if been_processed == False:
                 print "unknown file"
 
-def dict_to_list(dict):
+def dict_to_list(target_dict):
     ret = []
-    for key in dict.keys():
-        ret.extend([key, unicode(dict[key])])
+    if target_dict == {}:
+        return ret
+    for key in target_dict.keys():
+        if not isinstance(target_dict[key], dict):
+            ret.extend([key, unicode(target_dict[key])])
+        else:
+            key_ret = unicode(','.join(dict_to_list(target_dict[key])))
+            ret.extend([key, key_ret])
     return ret
 
 def query_by_id(user_id):
     return yelp_graph.cypher.execute("MATCH u WHERE u.user_id = {id} return u", {"id" : user_id})
+
+def query_by_bussiness_id(business_id):
+    return yelp_graph.cypher.execute("MATCH b WHERE b.business_id = {id} return b", {"id" : business_id})
 
 def create_knows_relations(user, person):
     yelp_graph.cypher.execute("MATCH (u:Person),(p:Person) WHERE u.user_id = {user_id} AND p.user_id = {person_id} " +
@@ -70,7 +79,22 @@ def handle_one_user(json_object):
 
 
 def handle_one_bussiness(json_object):
-    pass
+    result_set = query_by_bussiness_id(json_object["business_id"])
+    hours = dict_to_list(json_object["hours"])
+    print hours
+    attributes = dict_to_list(json_object["attributes"])
+    print attributes
+    assert len(result_set) == 0
+    yelp_graph.cypher.execute("CREATE (b :Business {business_id:{business_id}, full_address:{full_address}, " +
+                              "open:{open}, categories:{categories}, city:{city}, review_count:{review_count}, " +
+                              "name:{name}, neighborhoods:{neighborhoods}, longitude:{longitude}, state:{state}, " +
+                              "stars:{stars}, latitude:{latitude}, type:{type}, attributes:{attributes}, hours:{hours}})",
+                              {"business_id": json_object["business_id"], "full_address": json_object["full_address"],
+                               "open":json_object["open"], "categories":json_object["categories"],
+                               "city":json_object["city"], "review_count":json_object["review_count"], "name":json_object["name"],
+                               "neighborhoods":json_object["neighborhoods"], "longitude":json_object["longitude"],
+                               "state":json_object["state"], "stars":json_object["stars"], "latitude":json_object["latitude"],
+                               "type":json_object["type"], "attributes":attributes, "hours":hours})
 
 def handle_one_checkin(json_object):
     pass
@@ -93,6 +117,6 @@ def prepare_database():
 if __name__ == "__main__":
     # order here is important
     prepare_database()
-    file_list = ["yelp_academic_dataset_user.json"]
+    file_list = ["yelp_academic_dataset_testbusiness.json"]
     for elem in file_list:
         parse_json_object_from_file("dataset/yelp/" + elem)
