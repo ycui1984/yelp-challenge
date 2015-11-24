@@ -1,7 +1,5 @@
 __author__ = 'yan.cui'
 
-# network components distribution
-
 # friends of friends, number of non-unique friends, and number of unique friends
 
 # average degree of neighbors against degrees
@@ -69,9 +67,48 @@ def component_numbers():
      #  end ) as result unwind result as ret return count(ret)  2434 components
     pass
 
-def component_distribution():
 
-    pass
+def get_all_user_nodes_with_friends():
+    return yelp_graph.cypher.execute("MATCH(n:User) where (n)-[:knows]->() return id(n) as nid")
+
+def exist_path(nid1, nid2):
+    res = yelp_graph.cypher.execute("MATCH(n:User),(m:User) where id(n)={nid1} and id(m)={nid2} " +
+                                    "return shortestPath((n)-[*]-(m)) as path", {"nid1": nid1, "nid2":nid2})
+    return True if len(res) > 0 and res[0].path != None else False
+
+def component_distribution():
+    res = get_all_user_nodes_with_friends()
+    assert(len(res)) != 0
+    graphs, cnt = [], []
+    progress = 0
+    for node in res:
+        found = False
+        for indexg in range(len(graphs)):
+            if exist_path(node.nid, graphs[indexg]):
+                cnt[indexg] += 1
+                found = True
+                break
+        if found == False:
+            graphs.append(node.nid)
+            cnt.append(1)
+        progress += 1
+        try:
+            if progress % int(float(len(res)) * 0.01) == 0:
+                print str(progress)+"\n"
+        except:
+            print str(progress)+"\n"
+
+    print "number of components:", len(cnt)
+    component_table = {}
+    for elem in sorted(cnt):
+        try:
+            component_table[elem] += 1
+        except:
+            component_table[elem] = 1
+    with open("component_distribution.csv", "w") as file:
+        for key in sorted(component_table.keys()):
+            file.write(str(key)+","+str(component_table[key])+"\n")
+
 
 def get_random_nodeid():
     return yelp_graph.cypher.execute("MATCH(m:User) with m as node, rand() as r return node.user_id as nid order by r limit 1")
@@ -198,5 +235,6 @@ def user_increase_ratio():
     pass
 
 if __name__ == "__main__":
-    hop_distance_distribution()
+    # hop_distance_distribution()
+    component_distribution()
 
