@@ -11,3 +11,8 @@ by setting dbms.security.auth\_enabled=false in neo4j-server.properties under
 
 3. restart neo4j
 neo4j start
+
+4. import dataset by executing `python import_json_to_neo4j.py`
+Be patient, on my mac laptop, it takes roughly two weeks to import all user 
+data, optimize importing performance by REST API and bulk commit is considered 
+as future work as we focus on data analysis right now 
