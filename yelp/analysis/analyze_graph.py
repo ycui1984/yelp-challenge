@@ -1,10 +1,12 @@
 __author__ = 'yan.cui'
 
-# friends of friends, number of non-unique friends, and number of unique friends
+# avg clustering coefficient
+
+# avg degeneracy
+
+# friends of friends, number of non-unique friends, and number of unique friends, your friend has more friends than you
 
 # average degree of neighbors against degrees
-
-# percentage against neighbor's degree
 
 # which one is more effective? tip or review?
 
@@ -123,6 +125,10 @@ def hop_distance_distribution():
     # shortest path between two nodes
     # match(m:Test),(n:Test) where id(m)=39609 and id(n)=39608
     # with shortestPath((m)-[*]-(n)) as path return length(path)
+
+    # cal the expected avg distance
+    # 0.0001 + (0.0016-0.0001)*2 + (0.033-0.0016)*3 + (0.1176 - 0.033)*4 + (0.1799 - 0.1176)*5 + (0.2036-0.1799)*6 + (0.2093-0.2036)*7 + (0.2101-0.2093)*8
+    # / 0.2101 = 4.453593526891956 ~= 4.5
     experiment, inf, MAX_ITERARIONS = 0, 32767, 10000
     dist = {}
     for index in range(MAX_ITERARIONS):
@@ -209,6 +215,10 @@ def votes_distribution():
     # > 3000 and <= 4000 665
     # > 4000 and <= 5000  410
     # > 5000 1186
+    # match(n:User) return sum(toInt(n.votes[1]))   10949028    funny
+    # match(n:User) return sum(toInt(n.votes[3]))   21628724    useful
+    # match(n:User) return sum(toInt(n.votes[5]))   12241310    cool
+    # which may indicate the yelp graph is effective as useful votes dominate
     pass
 
 def compliments_distribution():
@@ -234,7 +244,97 @@ def user_increase_ratio():
     # "2015" 1148
     pass
 
+def get_nodes_with_degree(k):
+    return yelp_graph.cypher.execute("MATCH(n:User)-[r:knows]->() with n as node, count(r) as relations " +
+                                     "where relations={r} return id(node) as nid", {"r" : k})
+    #return yelp_graph.cypher.execute("MATCH(n:Test)-[r:testknow]->() with n as node, count(r) as relations " +
+    #                                 "where relations={r} return id(node) as nid", {"r" : k})
+
+def get_all_friends(n):
+    return yelp_graph.cypher.execute("MATCH(n:User)-[r:knows]->(m:User) where id(n)={uid} return id(m) as nid",
+                                     {"uid" : n.nid})
+    #return yelp_graph.cypher.execute("MATCH(n:Test)-[r:testknow]->(m:Test) where id(n)={uid} return id(m) as nid",
+    #                                {"uid" : n.nid})
+
+def has_knows_relation(n1, n2):
+    nid1, nid2 = n1.nid, n2.nid
+    ret = yelp_graph.cypher.execute("MATCH(n:User)-[r:knows]->(m:User) where id(n)={nid1} and id(m)={nid2} return r",
+                                    {"nid1":nid1, "nid2":nid2})
+    #ret = yelp_graph.cypher.execute("MATCH(n:Test)-[r:testknow]->(m:Test) where id(n)={nid1} and id(m)={nid2} return r",
+    #                                {"nid1":nid1, "nid2":nid2})
+
+    if len(ret) > 0 and ret[0].r != None:
+        return True
+    return False
+
+def calculate_relationships(n):
+    all_friend_nodes = get_all_friends(n)
+    ret = 0
+    if len(all_friend_nodes) <= 1:
+        return 0
+    for index in range(len(all_friend_nodes)-1):
+        sindex = index + 1
+        while sindex < len(all_friend_nodes):
+            if has_knows_relation(all_friend_nodes[index], all_friend_nodes[sindex]):
+                ret += 1
+            sindex += 1
+        if index % 50 == 0:
+            print index
+    return ret
+
+def calculate_avg_friendships(nodes):
+    if len(nodes) == 0:
+        return 0
+    sum = 0
+    for n in nodes:
+        sum += calculate_relationships(n)
+    print "DEBUG:"
+    print sum, len(nodes)
+    return int(float(sum) / float(len(nodes)))
+
+def avg_clustering_coefficient():
+    # 2,    0.0 because of ways to add friends(from review, from contacts, from facebook)
+    # 5,    0.1
+    # 10,   0.133333333333
+    # 20,   0.136842105263
+    # 50,   0.130612244898
+    # 100,  0.128686868687
+    # 200,  0.0782914572864
+    # 1000, 0.0437697697698
+    # 3830, 0.00587191196496
+
+    # largest degree is 3830  total should smaller than 5000 by yelp policy
+    # degrees = [2, 5, 10, 20, 50, 100, 200, 1000, 3830]
+    degrees = [3830]
+    for elem in degrees:
+        nodes = get_nodes_with_degree(elem)
+        print str(elem) + str(",") + str(len(nodes))
+        print str(elem) + str(",") + str(float(2*calculate_avg_friendships(nodes))/float(elem*(elem-1)))
+
+def construct_networkx_graph(friends):
+    pass
+
+def real_degeneracy(node):
+    friends = get_all_friends(node)
+    construct_networkx_graph(friends)
+    # degeneracy = get largest k core
+    # return degeneracy
+
+def cal_avg_degeneracy(nodes):
+    sum = 0
+    for n in nodes:
+        sum += real_degeneracy(n)
+    return sum / len(nodes)
+
+def avg_degeneracy():
+    degrees = [2, 5, 10, 20, 50, 100, 200, 1000, 3830]
+    for elem in degrees:
+        nodes = get_nodes_with_degree(elem)
+        print str(elem) + str(",") + str(cal_avg_degeneracy(nodes))
+
 if __name__ == "__main__":
     # hop_distance_distribution()
-    component_distribution()
+    # component_distribution()
+    # avg_clustering_coefficient()
+    avg_degeneracy()
 
