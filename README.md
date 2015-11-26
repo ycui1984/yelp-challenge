@@ -9,8 +9,7 @@ download and put into `./dataset/yelp` folder
 by setting `dbms.security.auth_enabled=false` in `neo4j-server.properties` under 
 `/usr/local/Cellar/neo4j/2.2.5/libexec/conf`
 
-3. restart neo4j
-neo4j start
+3. restart neo4j by `neo4j start`
 
 4. import dataset by executing `python import_json_to_neo4j.py`
 Be patient, on my mac laptop, it takes roughly two weeks to import all user 
