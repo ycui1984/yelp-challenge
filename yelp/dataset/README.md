@@ -1,1 +1,1 @@
-download yelp data and extract here
+download yelp dataset from `https://www.yelp.com/dataset_challenge/dataset` and extract here
