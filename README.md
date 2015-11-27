@@ -16,4 +16,4 @@ Be patient though, on my mac laptop, it takes roughly two weeks to import all us
 data, optimize importing performance by REST API and bulk commit is considered 
 as future work as we focus on data analysis.
 
-4.start neo4j by `neo4j start`
+4. start neo4j by `neo4j start`
