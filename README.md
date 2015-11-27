@@ -17,3 +17,5 @@ data, optimize importing performance by REST API and bulk commit is considered
 as future work as we focus on data analysis.
 
 4. start neo4j by `neo4j start`
+
+5. run analysis script in yelp/analysis folder, or you can create your own analysis program to get new insights.
