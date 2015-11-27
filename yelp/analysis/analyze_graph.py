@@ -294,11 +294,10 @@ def avg_clustering_coefficient():
     # 100,  0.12884914721
     # 200,  0.0783115577889
     # 1000, 0.0437697697698
-    # 3830,
+    # 3830, 0.00587191196496
 
     # largest degree is 3830  total should smaller than 5000 by yelp policy
-    # degrees = [2, 5, 10, 20, 50, 100, 200, 1000, 3830]
-    degrees = [3830]
+    degrees = [2, 5, 10, 20, 50, 100, 200, 1000, 3830]
     for elem in degrees:
         nodes = get_nodes_with_degree(elem)
         print str(elem) + str(",") + str(len(nodes))
@@ -314,13 +313,15 @@ def construct_networkx_graph(friends):
             if has_knows_relation(friends[index], friends[sindex]):
                 G.add_edge(friends[index].nid, friends[sindex].nid)
             sindex += 1
-        #if index % 50 == 0:
-        #    print index
+        if index % 50 == 0:
+            print index
     return G
 
 def real_degeneracy(node):
     friends = get_all_friends(node)
+    print "construct graph"
     G = construct_networkx_graph(friends)
+    print "calculate core number"
     core_list = nx.core_number(G)
     ret = 0
     for key in core_list.keys():
@@ -345,10 +346,9 @@ def avg_degeneracy():
     # 100,  12.5081967213
     # 200,  16.4
     # 1000, 53.0
-    # 3830,
+    # 3830, 50.0
 
-    # degrees = [2, 5, 10, 20, 50, 100, 200, 1000, 3830]
-    degrees = [3830]
+    degrees = [2, 5, 10, 20, 50, 100, 200, 1000, 3830]
     for elem in degrees:
         nodes = get_nodes_with_degree(elem)
         print str(elem) + str(",") + str(cal_avg_degeneracy(nodes))
@@ -383,6 +383,26 @@ def cal_avg_friend_of_friend(nodes, unique):
     return float(sum) / (float)(len(nodes))
 
 def avg_friends_of_friends(unique=True):
+    #2,     279.728278555
+    #5,     731.413275982
+    #10,    1419.42413693
+    #20,    2920.25526742
+    #50,    6890.26486486
+    #100,   11660.1639344
+    #200,   18052.6
+    #1000,  38189.0
+    #3830,  61114.0
+
+    #2,     288.005165962
+    #5,     803.487677284
+    #10,    1696.20365535
+    #20,    3987.73338736
+    #50,    12437.4918919
+    #100,   28778.1967213
+    #200,   56126.4
+    #1000,  224701.0
+    #3830,  347004.0
+
     degrees = [2, 5, 10, 20, 50, 100, 200, 1000, 3830]
     for elem in degrees:
         nodes = get_nodes_with_degree(elem)
@@ -436,7 +456,7 @@ if __name__ == "__main__":
     # component_distribution()
 
     #avg_degrees()
-    avg_clustering_coefficient()
+    #avg_clustering_coefficient()
     avg_degeneracy()
     avg_friends_of_friends(True)
     avg_friends_of_friends(False)
