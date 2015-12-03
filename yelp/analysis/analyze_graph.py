@@ -4,6 +4,8 @@ __author__ = 'yan.cui'
 
 # how location affect users on yelp, we have location of business, how many uses cross
 
+# How much influence does my social circle have on my business choices and my ratings?
+
 from import_json_to_neo4j import yelp_graph
 import networkx as nx
 
@@ -450,6 +452,20 @@ def avg_degrees():
         nodes = get_nodes_with_degree(elem)
         print str(elem) + str(",") + str(len(nodes))
         print str(elem) + str(",") + str(cal_avg_degrees_of_friends(nodes))
+
+def business_dis_by_state():
+                    #usa                                                 # canada                             UK
+    #PA,   NC,   SC,  WI,   IL,  AZ,     NV,    WA,  CA, MN, MA,  OR |  QC,   ON,    | EDH,   MLN,      ELN,       HAM, SCB, KHL
+    #3041, 4963, 189, 2307, 627, 25230,  16485  1,   3,   1,  1,   1 |  3921  351,   | 2971   123       10         1     3   1
+
+    # UK                 Germany
+    #FIF,  XGL, NTH,   | BW,    RP,   NW
+    # 4     1    1     | 934   13     1
+    pass
+
+# any info from stars and review count?
+# star distribution 345 is larger than 1 2
+# review count <= 100 is much larger than others
 
 if __name__ == "__main__":
     # hop_distance_distribution()
