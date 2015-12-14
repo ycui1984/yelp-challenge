@@ -1,10 +1,15 @@
 __author__ = 'yan.cui'
 
 # which one is more effective? tip or review?
+# if review is too short, it converts to tip automatically
 
 # how location affect users on yelp, we have location of business, how many uses cross
+# how many percentage user comment on different business?
+# how the behavior change when it happens, when comment on different business,
+# are there different goals?
 
 # How much influence does my social circle have on my business choices and my ratings?
+# affect by elite users?
 
 from import_json_to_neo4j import yelp_graph
 import networkx as nx
@@ -166,8 +171,10 @@ def fans_distribution():
     pass
 
 def elite_distribution():
+    # recommend elite users according to network
     # match(n:User) where n.elite=[] return count(n)  341414
     # most are not elite users
+    # AVG DEGREE FOR ELITE USERS?
     # match(n:User) where n.elite<>[] return avg(n.fans) = 16.3822773803407 ~= 16
     # match(n:User) where n.elite<>[] return avg(n.review_count) = 245.09220979407928 ~= 245
     # match(n:User) where n.elite<>[] return avg(n.avg_stars) = 3.7801367534879953
@@ -463,9 +470,32 @@ def business_dis_by_state():
     # 4     1    1     | 934   13     1
     pass
 
+def business_checkin_count():
+    # 45166 / 61184
+    pass
+
+def business_type_distribution():
+    # []          517
+    # shopping    8919
+    # restaurants 21892
+    # food        7862
+    # home service & local service 2853 + 2144
+    # Beauty & spas  4738
+    # Fitness & instruction 1068
+    # Arts & Entertainments 1946
+    # Event planning and services 2467
+    # Health & Medical 3213
+    # Automative 2965
+    # Nightlife 4340
+    # Hotels and travel 2131
+    pass
+
 # any info from stars and review count?
 # star distribution 345 is larger than 1 2
 # review count <= 100 is much larger than others
+
+def checkin_breakdown():
+    pass
 
 if __name__ == "__main__":
     # hop_distance_distribution()
@@ -473,7 +503,8 @@ if __name__ == "__main__":
 
     #avg_degrees()
     #avg_clustering_coefficient()
-    avg_degeneracy()
-    avg_friends_of_friends(True)
-    avg_friends_of_friends(False)
+    #avg_degeneracy()
+    #avg_friends_of_friends(True)
+    #avg_friends_of_friends(False)
+    pass
 
