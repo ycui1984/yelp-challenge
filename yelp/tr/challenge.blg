@@ -1,0 +1,59 @@
+This is BibTeX, Version 0.99d (TeX Live 2015)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: challenge.aux
+The style file: plain.bst
+Database file #1: ref.bib
+Warning--to sort, need author or key in dataset
+Warning--to sort, need author or key in neo4j
+Warning--to sort, need author or key in limit
+Warning--to sort, need author or key in sixdegree
+Warning--to sort, need editor, organization, or key in facebook
+Warning--to sort, need editor, organization, or key in imc2007
+Warning--to sort, need author or key in yelpdata
+Warning--to sort, need author or key in elite
+Warning--to sort, need editor, organization, or key in cscw
+Warning--to sort, need editor, organization, or key in expert
+Warning--to sort, need editor, organization, or key in stanford
+Warning--to sort, need editor, organization, or key in local
+You've used 12 entries,
+            2118 wiz_defined-function locations,
+            543 strings with 5338 characters,
+and the built_in function-call counts, 1950 in all, are:
+= -- 182
+> -- 12
+< -- 0
++ -- 15
+- -- 0
+* -- 90
+:= -- 227
+add.period$ -- 22
+call.type$ -- 12
+change.case$ -- 30
+chr.to.int$ -- 0
+cite$ -- 24
+duplicate$ -- 108
+empty$ -- 277
+format.name$ -- 0
+if$ -- 477
+int.to.chr$ -- 0
+int.to.str$ -- 12
+missing$ -- 0
+newline$ -- 45
+num.names$ -- 0
+pop$ -- 86
+preamble$ -- 1
+purify$ -- 24
+quote$ -- 0
+skip$ -- 73
+stack$ -- 0
+substring$ -- 63
+swap$ -- 12
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 42
+warning$ -- 12
+while$ -- 0
+width$ -- 14
+write$ -- 90
+(There were 12 warnings)

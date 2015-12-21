@@ -1,0 +1,48 @@
+\begin{thebibliography}{10}
+
+\bibitem{imc2007}
+{\em Measurement and Analysis of Online Social Networks}. ACM, 2007.
+
+\bibitem{facebook}
+{\em The Anatomy of the Facebook Social Graph}, 2011.
+
+\bibitem{stanford}
+{\em An Analysis of the “Elite” Users on Yelp.com}. course project report,
+  2014.
+
+\bibitem{expert}
+{\em Multidimensional Characterization of Expert Users in the Yelp Review
+  Network}, 2014.
+
+\bibitem{local}
+{\em Finding Local Experts From Yelp Dataset}. master thesis, 2015.
+
+\bibitem{yelpdata}
+An introduction to yelp metrics as of september 30,2015, 2015.
+\newblock \url{http://www.yelp.com/factsheet}.
+
+\bibitem{neo4j}
+Neo4j, 2015.
+\newblock \url{http://neo4j.com/}.
+
+\bibitem{sixdegree}
+Six degrees of separation, 2015.
+\newblock \url{https://en.wikipedia.org/wiki/Six_degrees_of_separation}.
+
+\bibitem{cscw}
+{\em Understanding Online Reviews: Funny, Cool or Useful?} ACM, 2015.
+
+\bibitem{dataset}
+Yelp dataset challenge, 2015.
+\newblock \url{http://www.yelp.com/dataset_challenge}.
+
+\bibitem{elite}
+Yelp elite squad: La west, 2015.
+\newblock \url{http://www.yelp.com/elite}.
+
+\bibitem{limit}
+Yelp places a limit on number of friends = 5000, 2015.
+\newblock
+  \url{http://www.yelp.com/topic/sacramento-yelp-places-a-limit-on-number-of-friends-5000}.
+
+\end{thebibliography}
